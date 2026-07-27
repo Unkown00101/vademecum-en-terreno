@@ -1,176 +1,264 @@
 /* ============================================================
-   Vademécum APS Coquimbo — Refinamiento visual (capa adicional)
-   Se carga DESPUÉS del CSS incrustado y solo ajusta apariencia.
-   No cambia estructura ni comportamiento.
+   Vademécum APS Coquimbo — Rediseño visual v2
+   Capa que se carga DESPUÉS del CSS incrustado. Solo apariencia.
+   Objetivo: quitar rigidez, dar aire, jerarquía y calidez.
    ============================================================ */
 
-/* ---- 1. Sistema de color unificado (paleta salud, sobria) ---- */
 :root {
-  --v-tinta:        #12222a;   /* texto principal, más suave que el negro */
-  --v-tinta-2:      #4a5b62;   /* texto secundario */
-  --v-petroleo:     #0c2830;   /* marca / header */
-  --v-petroleo-2:   #143a46;   /* degradado header */
-  --v-papel:        #eef2f2;   /* fondo */
-  --v-tarjeta:      #ffffff;
-  --v-borde:        #dfe6e6;
-  --v-verde:        #1f8a54;   /* disponible */
-  --v-verde-bg:     #e8f5ee;
-  --v-ambar:        #b8791a;   /* con condición */
-  --v-ambar-bg:     #fbf1e0;
-  --v-rojo:         #b23b3b;   /* no disponible / alerta */
-  --v-rojo-bg:      #fbeaea;
-  --v-acento:       #2a7d8c;   /* acento frío para foco/enlaces */
-  --v-sombra:       0 1px 2px rgba(18,34,42,.06), 0 4px 16px rgba(18,34,42,.06);
-  --v-radio:        14px;
+  --v-tinta:      #14262e;
+  --v-tinta-2:    #5a6b72;
+  --v-petroleo:   #0c2830;
+  --v-petroleo-2: #17414e;
+  --v-teal:       #2a7d8c;
+  --v-verde:      #1c8a53;
+  --v-verde-bg:   #e9f6ef;
+  --v-ambar:      #b0761a;
+  --v-ambar-bg:   #fbf2e2;
+  --v-rojo:       #b23b3b;
+  --v-rojo-bg:    #fbebeb;
+  --v-borde:      #e2e8e9;
+  --v-radio:      18px;
+  --v-radio-sm:   12px;
+  --v-sombra-sm:  0 1px 2px rgba(20,38,46,.05);
+  --v-sombra:     0 2px 10px rgba(20,38,46,.06), 0 8px 30px rgba(20,38,46,.05);
 }
 
-/* ---- 2. Tipografía: más legible en terreno, jerarquía clara ---- */
-body {
-  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+/* ---------- 1. Lienzo: fondo con profundidad, sin gris plano ---------- */
+html, body {
+  background:
+    radial-gradient(1200px 500px at 50% -200px, #dbe7e7 0%, transparent 70%),
+    linear-gradient(180deg, #eef3f3 0%, #e7eeee 100%) !important;
+  background-attachment: fixed !important;
   color: var(--v-tinta);
-  background: var(--v-papel);
   -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-  letter-spacing: .1px;
 }
 
-/* Encabezado con degradado sutil y mejor peso de marca */
-header,
-.barra-estab,
-[class*="cabecera-app"] {
-  background: linear-gradient(160deg, var(--v-petroleo) 0%, var(--v-petroleo-2) 100%) !important;
+/* Ancho cómodo: el problema era max-width:860 con márgenes enormes.
+   Damos un contenedor amplio y bien centrado, con aire lateral real. */
+.app {
+  max-width: 1120px !important;
+  margin-inline: auto !important;
+  padding: 0 clamp(16px, 4vw, 40px) 48px !important;
 }
-.marca {
-  font-weight: 700;
+
+/* ---------- 2. Encabezado: integrado, ancho completo, con degradado ---------- */
+header, .barra-estab {
+  background: linear-gradient(155deg, var(--v-petroleo) 0%, var(--v-petroleo-2) 100%) !important;
+}
+/* El header ocupa todo el ancho de ventana, contenido alineado al centro */
+header {
+  box-shadow: 0 4px 20px rgba(12,40,48,.18);
+}
+header > *, .barra-estab > * {
+  max-width: 1120px;
+  margin-inline: auto;
+}
+.marca h1 {
+  font-weight: 750;
   letter-spacing: .2px;
 }
-.res, .mono {
-  letter-spacing: .3px;
-  opacity: .85;
+.res, .mono { opacity: .82; letter-spacing: .4px; }
+
+.selector-estab {
+  border-radius: 999px !important;
+  background: rgba(255,255,255,.08) !important;
+  border: 1px solid rgba(255,255,255,.16) !important;
+  backdrop-filter: blur(4px);
 }
 
-/* Buscador: más aire y foco visible accesible */
-.caja-busqueda,
+/* ---------- 3. Buscador: card flotante, no barra pegada ---------- */
+.zona-busqueda {
+  background: transparent !important;
+  padding-top: 18px !important;
+}
+.zona-busqueda .caja-busqueda,
+.zona-busqueda > div:first-child {
+  border-radius: 999px !important;
+  box-shadow: var(--v-sombra) !important;
+  border: 1px solid var(--v-borde) !important;
+  background: #fff !important;
+}
 .zona-busqueda input {
-  border-radius: 12px !important;
+  border-radius: 999px !important;
+  font-size: 1.02rem !important;
 }
 .zona-busqueda input:focus,
 input:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--v-acento) 40%, transparent) !important;
-  outline-offset: 1px;
+  outline: 3px solid color-mix(in srgb, var(--v-teal) 35%, transparent) !important;
+  outline-offset: 2px;
 }
 
-/* ---- 3. Tarjetas de resultado y fichas: profundidad y ritmo ---- */
-.fila,
-.tarjeta,
-.grupo-arsenal,
-.card,
-.item-paro {
+/* ---------- 4. Chips de filtro: píldoras con vida ---------- */
+.chip {
+  border-radius: 999px !important;
+  font-weight: 600 !important;
+  border: 1px solid rgba(255,255,255,.22) !important;
+  transition: transform .1s ease, background .15s ease;
+}
+.chip:hover { transform: translateY(-1px); }
+.chip.activa {
+  background: #fff !important;
+  color: var(--v-petroleo) !important;
+  border-color: #fff !important;
+}
+
+/* ---------- 5. Barra de pestañas inferior: separada y con acento ---------- */
+.inferior {
+  background: #fff !important;
   border-radius: var(--v-radio) !important;
   box-shadow: var(--v-sombra) !important;
   border: 1px solid var(--v-borde) !important;
-  transition: transform .12s ease, box-shadow .12s ease;
+  padding: 6px !important;
+  margin: 18px 0 !important;
+  gap: 4px !important;
 }
-.fila:hover,
-.tarjeta:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(18,34,42,.08), 0 8px 24px rgba(18,34,42,.10) !important;
+.inferior button {
+  border-radius: var(--v-radio-sm) !important;
+  font-weight: 600 !important;
+  color: var(--v-tinta-2) !important;
+  transition: background .15s ease, color .15s ease;
 }
-.nombre,
-.nom,
-.titular {
-  font-weight: 650;
-  letter-spacing: .1px;
-}
-.sub, .det, .conc, .forma {
-  color: var(--v-tinta-2);
-}
-
-/* Banda de estado del semáforo: más nítida y con color de texto acorde */
-.marca-estado.si,      .marca-estado.verde   { background: var(--v-verde)  !important; }
-.marca-estado.cond,    .marca-estado.ambar   { background: var(--v-ambar)  !important; }
-.marca-estado.no,      .marca-estado.rojo    { background: var(--v-rojo)   !important; }
-
-.veredicto.si,   .cl.si   { background: var(--v-verde-bg);  color: var(--v-verde); }
-.veredicto.cond, .cl.cond { background: var(--v-ambar-bg);  color: var(--v-ambar); }
-.veredicto.no,   .cl.no   { background: var(--v-rojo-bg);   color: var(--v-rojo); }
-.veredicto {
-  border-radius: 12px;
-  padding: 12px 14px;
-  font-weight: 600;
+.inferior button:hover { background: #f1f6f6 !important; }
+.inferior button.activa,
+.inferior button[aria-selected="true"] {
+  background: color-mix(in srgb, var(--v-teal) 12%, #fff) !important;
+  color: var(--v-petroleo) !important;
 }
 
-/* Insignias / chips: forma píldora coherente */
-.chip,
-.insignia,
-.etq,
-.tax {
+/* ---------- 6. FIN del doble marco ----------
+   Los contenedores de sección .tarjeta que SOLO envuelven una rejilla
+   o un resumen dejan de parecer cajas: sin fondo, sin borde.
+   Las cajas de verdad quedan dentro. */
+.tarjeta:has(> .rejilla-cat),
+.tarjeta:has(> .resumen-estab) {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 8px 0 0 !important;
+}
+.tarjeta > h2 {
+  font-size: .82rem !important;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  color: var(--v-tinta-2) !important;
+  font-weight: 700 !important;
+  margin: 4px 2px 12px !important;
+}
+
+/* ---------- 7. Resumen del arsenal: tres tarjetas con acento ---------- */
+.resumen-estab {
+  gap: 14px !important;
+}
+.resumen-estab > div {
+  background: #fff !important;
+  border-radius: var(--v-radio) !important;
+  box-shadow: var(--v-sombra) !important;
+  border: 1px solid var(--v-borde) !important;
+  padding: 20px 16px !important;
+  position: relative;
+  overflow: hidden;
+}
+.resumen-estab > div::before {
+  content: "";
+  position: absolute; inset: 0 auto 0 0; width: 4px;
+  background: var(--v-teal);
+}
+.resumen-estab > div:nth-child(3)::before { background: var(--v-ambar); }
+
+/* ---------- 8. Rejilla de categorías: tarjetas con carácter ---------- */
+.rejilla-cat {
+  gap: 12px !important;
+}
+.btn-cat {
+  background: #fff !important;
+  border: 1px solid var(--v-borde) !important;
+  border-radius: var(--v-radio) !important;
+  box-shadow: var(--v-sombra-sm) !important;
+  padding: 16px 14px !important;
+  font-weight: 650 !important;
+  color: var(--v-tinta) !important;
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease !important;
+  position: relative;
+  text-align: left;
+}
+.btn-cat:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--v-sombra) !important;
+  border-color: color-mix(in srgb, var(--v-teal) 40%, var(--v-borde)) !important;
+}
+/* El número (conteo) como insignia circular con acento */
+.btn-cat > :last-child {
+  color: var(--v-teal) !important;
+  font-weight: 750 !important;
+}
+
+/* Iconografía por categoría (refuerza sin fotos de fármacos) */
+.btn-cat::before {
+  margin-right: .5em; font-size: 1.1em; line-height: 1;
+}
+.btn-cat[data-cat^="Cardio"]::before   { content: "🫀"; }
+.btn-cat[data-cat="Respiratorio"]::before { content: "🫁"; }
+.btn-cat[data-cat^="Salud mental"]::before,
+.btn-cat[data-cat="Neurología"]::before { content: "🧠"; }
+.btn-cat[data-cat="Diabetes"]::before,
+.btn-cat[data-cat="Endocrinología"]::before { content: "💉"; }
+.btn-cat[data-cat^="Dolor"]::before      { content: "🌡️"; }
+.btn-cat[data-cat^="Gastro"]::before     { content: "🩹"; }
+.btn-cat[data-cat="Alergia"]::before     { content: "🌿"; }
+.btn-cat[data-cat="Corticoides"]::before { content: "💊"; }
+.btn-cat[data-cat^="Fluidos"]::before    { content: "💧"; }
+.btn-cat[data-cat^="Urgencias"]::before  { content: "🚑"; }
+.btn-cat[data-cat^="Anestesia"]::before  { content: "🩺"; }
+.btn-cat[data-cat^="Salud sexual"]::before { content: "⚕️"; }
+.btn-cat[data-cat^="Metab"]::before      { content: "⚗️"; }
+
+/* ---------- 9. Aviso de instalar: banner suave, no bloque duro ---------- */
+.aviso-instalar {
+  background: linear-gradient(120deg, var(--v-petroleo), var(--v-petroleo-2)) !important;
+  border-radius: var(--v-radio) !important;
+  box-shadow: var(--v-sombra) !important;
+  padding: 16px 18px !important;
+}
+.aviso-instalar .btn {
   border-radius: 999px !important;
-  font-weight: 550;
-  letter-spacing: .2px;
-}
-.chip.activa {
-  background: var(--v-petroleo) !important;
-  color: #fff !important;
+  font-weight: 650 !important;
 }
 
-/* Alertas y avisos: color semántico consistente */
-.alerta,
-.aviso {
-  border-left: 4px solid var(--v-ambar);
-  background: var(--v-ambar-bg);
-  border-radius: 10px;
+/* ---------- 10. Fichas de resultado / detalle ---------- */
+.fila, .grupo-arsenal, .pres, .item-paro, .card {
+  border-radius: var(--v-radio) !important;
+  box-shadow: var(--v-sombra) !important;
+  border: 1px solid var(--v-borde) !important;
 }
-.orientativo {
-  border-left: 4px solid var(--v-acento);
-  background: color-mix(in srgb, var(--v-acento) 8%, #fff);
-  border-radius: 10px;
+.fila { transition: transform .12s ease, box-shadow .12s ease; }
+.fila:hover { transform: translateY(-1px); }
+
+.veredicto {
+  border-radius: var(--v-radio) !important;
+  padding: 16px 18px !important;
+}
+.veredicto.si,   .cl.si   { background: var(--v-verde-bg) !important; }
+.veredicto.cond, .cl.cond { background: var(--v-ambar-bg) !important; }
+.veredicto.no,   .cl.no   { background: var(--v-rojo-bg) !important; }
+
+.insignia, .etq, .tax, .pill {
+  border-radius: 999px !important;
+  font-weight: 600 !important;
 }
 
-/* ---- 4. Iconografía por categoría terapéutica (::before) ---- */
-/* Refuerza el reconocimiento visual sin fotos de fármacos (riesgo clínico). */
-.tarjeta[data-cat]::before,
-.tax::before {
-  margin-right: .4em;
-  font-size: 1.05em;
-  line-height: 1;
-}
-.tax[data-cat="Cardiovascular"]::before,
-.tax[data-cat="Cardiovascular/renal"]::before,
-.tax[data-cat="Cardiovascular/hematología"]::before,
-.tax[data-cat="Cardiometabólico"]::before        { content: "🫀"; }
-.tax[data-cat="Respiratorio"]::before             { content: "🫁"; }
-.tax[data-cat="Salud mental"]::before,
-.tax[data-cat="Salud mental/urgencias"]::before   { content: "🧠"; }
-.tax[data-cat="Neurología"]::before               { content: "🧠"; }
-.tax[data-cat="Diabetes"]::before,
-.tax[data-cat="Endocrinología"]::before           { content: "💉"; }
-.tax[data-cat="Dolor e inflamación"]::before,
-.tax[data-cat="Dolor y fiebre"]::before           { content: "🌡️"; }
-.tax[data-cat="Gastrointestinal"]::before,
-.tax[data-cat="Gastrointestinal/hidratación"]::before { content: "🩹"; }
-.tax[data-cat="Alergia"]::before                  { content: "🌿"; }
-.tax[data-cat="Corticoides"]::before              { content: "💊"; }
-.tax[data-cat="Fluidos y electrolitos"]::before   { content: "💧"; }
-.tax[data-cat="Urgencias y reanimación"]::before  { content: "🚑"; }
-.tax[data-cat="Anestesia local y procedimientos"]::before { content: "🩺"; }
-.tax[data-cat="Salud sexual y reproductiva"]::before { content: "⚕️"; }
-.tax[data-cat="Metabólico/toxicología"]::before   { content: "⚗️"; }
-
-/* ---- 5. Botones: consistentes y accesibles ---- */
 .btn {
-  border-radius: 10px !important;
-  font-weight: 600;
+  border-radius: 999px !important;
+  font-weight: 650 !important;
   transition: filter .12s ease, transform .06s ease;
 }
 .btn:active { transform: translateY(1px); }
-.btn.secundario:hover { filter: brightness(.97); }
-.btn.peligro { background: var(--v-rojo) !important; color: #fff !important; }
+.btn.peligro { background: var(--v-rojo) !important; color:#fff !important; }
 
-/* ---- 6. Detalles finos ---- */
-::selection { background: color-mix(in srgb, var(--v-acento) 25%, transparent); }
+/* ---------- 11. Detalles ---------- */
+::selection { background: color-mix(in srgb, var(--v-teal) 22%, transparent); }
 * { -webkit-tap-highlight-color: transparent; }
 
-@media (min-width: 720px) {
-  .app { max-width: 860px; margin-inline: auto; }
+@media (max-width: 640px) {
+  .app { padding-inline: 14px !important; }
+  .rejilla-cat { gap: 10px !important; }
 }
