@@ -33,23 +33,35 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Ancho cómodo: el problema era max-width:860 con márgenes enormes.
-   Damos un contenedor amplio y bien centrado, con aire lateral real. */
-.app {
+/* Ancho cómodo. OJO: el header también tiene la clase .app (es
+   <header class="app">), así que NO limitamos el ancho vía .app —
+   eso recortaba el header sticky. Limitamos solo el contenido que
+   NO es el header, con :not(header). */
+.app:not(header) {
   max-width: 1120px !important;
   margin-inline: auto !important;
   padding: 0 clamp(16px, 4vw, 40px) 48px !important;
 }
 
-/* ---------- 2. Encabezado: integrado, ancho completo, con degradado ---------- */
-header, .barra-estab {
-  background: linear-gradient(155deg, var(--v-petroleo) 0%, var(--v-petroleo-2) 100%) !important;
-}
-/* El header ocupa todo el ancho de ventana, contenido alineado al centro */
+/* ---------- 2. Encabezado: barra de ancho COMPLETO, contenido centrado ---------- */
+/* El header ocupa todo el ancho de la ventana (rompe cualquier max-width
+   heredado) y su contenido interno se centra a 1120px. Así deja de verse
+   como una caja recortada flotando. */
+header.app,
 header {
-  box-shadow: 0 4px 20px rgba(12,40,48,.18);
+  max-width: none !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 12px clamp(16px, 4vw, 40px) 14px !important;
+  background: linear-gradient(155deg, var(--v-petroleo) 0%, var(--v-petroleo-2) 100%) !important;
+  box-shadow: 0 4px 20px rgba(12,40,48,.18) !important;
+  box-sizing: border-box !important;
 }
-header > *, .barra-estab > * {
+.barra-estab {
+  background: transparent !important;
+}
+/* Centrar el contenido interno del header */
+header > * {
   max-width: 1120px;
   margin-inline: auto;
 }
@@ -174,27 +186,47 @@ input:focus-visible {
   border: 1px solid var(--v-borde) !important;
   border-radius: var(--v-radio) !important;
   box-shadow: var(--v-sombra-sm) !important;
-  padding: 16px 14px !important;
+  padding: 14px 16px !important;
   font-weight: 650 !important;
   color: var(--v-tinta) !important;
   transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease !important;
   position: relative;
-  text-align: left;
+  /* Estructura: [ícono] [texto ......... ] [número]
+     El botón es flex con space-between. Metemos el ícono como ::before
+     con ancho fijo para que NO empuje el texto de forma irregular, y
+     dejamos el texto alineado a la izquierda de manera consistente. */
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  text-align: left !important;
+  min-height: 58px;
 }
 .btn-cat:hover {
   transform: translateY(-2px);
   box-shadow: var(--v-sombra) !important;
   border-color: color-mix(in srgb, var(--v-teal) 40%, var(--v-borde)) !important;
 }
-/* El número (conteo) como insignia circular con acento */
-.btn-cat > :last-child {
+/* El primer span (texto) crece y empuja el número al extremo derecho */
+.btn-cat > span:first-of-type {
+  flex: 1 1 auto !important;
+  line-height: 1.25 !important;
+}
+/* El número (conteo) fijo a la derecha, con acento */
+.btn-cat > .n,
+.btn-cat > span:last-child {
+  flex: 0 0 auto !important;
   color: var(--v-teal) !important;
   font-weight: 750 !important;
+  margin-left: 8px !important;
 }
 
-/* Iconografía por categoría (refuerza sin fotos de fármacos) */
+/* Iconografía por categoría: ícono como caja fija que NO desalinea */
 .btn-cat::before {
-  margin-right: .5em; font-size: 1.1em; line-height: 1;
+  flex: 0 0 auto !important;
+  width: 1.5em;
+  text-align: center;
+  font-size: 1.25em;
+  line-height: 1;
 }
 .btn-cat[data-cat^="Cardio"]::before   { content: "🫀"; }
 .btn-cat[data-cat="Respiratorio"]::before { content: "🫁"; }
