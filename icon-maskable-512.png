@@ -1,0 +1,110 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""Convierte el JSON del Vademécum en un payload compacto (data.js)."""
+import json, os, re, unicodedata
+
+SRC = os.environ.get("VADE_JSON", "Vademecum_APS_Coquimbo_2025_v2.json")
+OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data.js")
+
+d = json.load(open(SRC, encoding="utf-8"))
+ARS = ["Centros de Salud APS", "Dispositivos de Urgencia APS", "Postas Rurales de Salud"]
+ARS_IDX = {a: i for i, a in enumerate(ARS)}
+
+# ---- tabla de strings internados -------------------------------------------
+T, TI = [], {}
+def intern(s):
+    s = (s or "").strip()
+    if s == "":
+        return -1
+    if s not in TI:
+        TI[s] = len(T)
+        T.append(s)
+    return TI[s]
+
+FICHA_FIELDS = [
+    "dosis_y_posologia", "indicaciones_principales", "mecanismo_resumido",
+    "reacciones_frecuentes", "alertas_graves", "contraindicaciones_precauciones",
+    "interacciones_clave", "monitorizacion", "educacion_paciente",
+    "embarazo_lactancia", "ajuste_renal_hepatico", "rol_enfermeria",
+    "checklist_previa",
+]
+
+fichas = {f["medicamento"]: f for f in d["fichas_clinicas"]}
+
+# ---- agrupar presentaciones por medicamento --------------------------------
+por_med = {}
+for p in d["presentaciones"]:
+    por_med.setdefault(p["medicamento_normalizado"], []).append(p)
+
+def norm(s):
+    s = unicodedata.normalize("NFD", (s or "").lower())
+    return "".join(c for c in s if unicodedata.category(c) != "Mn")
+
+meds = []
+for nombre in sorted(por_med, key=lambda x: norm(x)):
+    pres = por_med[nombre]
+    f = fichas.get(nombre, {})
+    filas = []
+    for p in pres:
+        filas.append([
+            p.get("registro_isp", "").strip(),
+            p.get("forma_farmaceutica", "").strip(),
+            p.get("concentracion", "").strip(),
+            p.get("programa_ges", "").strip(),
+            p.get("observaciones", "").strip(),
+            ARS_IDX[p["arsenal"]],
+            p.get("via_resumida", "").strip(),
+            p.get("etiquetas_operativas", "").strip(),
+            p.get("nota_pie_medicamento", "").strip(),
+            p.get("pagina_pdf", 0),
+            p.get("medicamento_oficial", "").strip(),
+        ])
+    # ordenar: arsenal, forma
+    filas.sort(key=lambda r: (r[5], norm(r[1]), r[2]))
+    meds.append({
+        "n": nombre,
+        "o": sorted({p.get("medicamento_oficial", "").strip() for p in pres} - {nombre}),
+        "cat": f.get("categoria_terapeutica", pres[0].get("categoria_terapeutica", "")),
+        "cls": f.get("clase_farmacologica", pres[0].get("clase_farmacologica", "")),
+        "sub": f.get("subclase_especifica", ""),
+        "tp": f.get("tipo_producto", pres[0].get("tipo_producto", "")),
+        "vig": f.get("nivel_vigilancia", pres[0].get("nivel_vigilancia", "")),
+        "key": f.get("consideracion_clave", ""),
+        "f": [intern(f.get(k, "")) for k in FICHA_FIELDS],
+        "p": filas,
+    })
+
+payload = {
+    "meta": {
+        "titulo": "Vademécum APS Coquimbo",
+        "version": "3.0",
+        "documento_base": d["metadata"]["documento_base"],
+        "resolucion": "2504243202",
+        "fecha_resolucion": "11/09/2025",
+        "vigencia": "2 años desde el 11/09/2025 (hasta el 11/09/2027)",
+        "alcance": d["metadata"]["alcance"],
+        "presentaciones": len(d["presentaciones"]),
+        "medicamentos": len(meds),
+        "advertencia": d["metadata"]["advertencia"],
+    },
+    "arsenales": ARS,
+    "notas": d["notas"],
+    "siglas": d["siglas"],
+    "fuentes": d["fuentes"],
+    "campos_ficha": FICHA_FIELDS,
+    "T": T,
+    "meds": meds,
+}
+
+os.makedirs(os.path.dirname(OUT), exist_ok=True)
+with open(OUT, "w", encoding="utf-8") as fh:
+    fh.write("/* Vademécum APS Coquimbo — datos derivados de la Resolución N.º 2504243202 (11/09/2025).\n")
+    fh.write("   Generado automáticamente. No editar a mano: regenerar desde el JSON fuente. */\n")
+    fh.write("window.VADE = ")
+    json.dump(payload, fh, ensure_ascii=False, separators=(",", ":"))
+    fh.write(";\n")
+
+print("medicamentos:", len(meds))
+print("presentaciones:", sum(len(m["p"]) for m in meds))
+print("strings internados:", len(T))
+print("tamaño data.js:", round(os.path.getsize(OUT) / 1024, 1), "KB")
