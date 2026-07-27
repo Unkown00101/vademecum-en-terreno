@@ -1,0 +1,176 @@
+/* ============================================================
+   Vademécum APS Coquimbo — Refinamiento visual (capa adicional)
+   Se carga DESPUÉS del CSS incrustado y solo ajusta apariencia.
+   No cambia estructura ni comportamiento.
+   ============================================================ */
+
+/* ---- 1. Sistema de color unificado (paleta salud, sobria) ---- */
+:root {
+  --v-tinta:        #12222a;   /* texto principal, más suave que el negro */
+  --v-tinta-2:      #4a5b62;   /* texto secundario */
+  --v-petroleo:     #0c2830;   /* marca / header */
+  --v-petroleo-2:   #143a46;   /* degradado header */
+  --v-papel:        #eef2f2;   /* fondo */
+  --v-tarjeta:      #ffffff;
+  --v-borde:        #dfe6e6;
+  --v-verde:        #1f8a54;   /* disponible */
+  --v-verde-bg:     #e8f5ee;
+  --v-ambar:        #b8791a;   /* con condición */
+  --v-ambar-bg:     #fbf1e0;
+  --v-rojo:         #b23b3b;   /* no disponible / alerta */
+  --v-rojo-bg:      #fbeaea;
+  --v-acento:       #2a7d8c;   /* acento frío para foco/enlaces */
+  --v-sombra:       0 1px 2px rgba(18,34,42,.06), 0 4px 16px rgba(18,34,42,.06);
+  --v-radio:        14px;
+}
+
+/* ---- 2. Tipografía: más legible en terreno, jerarquía clara ---- */
+body {
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--v-tinta);
+  background: var(--v-papel);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  letter-spacing: .1px;
+}
+
+/* Encabezado con degradado sutil y mejor peso de marca */
+header,
+.barra-estab,
+[class*="cabecera-app"] {
+  background: linear-gradient(160deg, var(--v-petroleo) 0%, var(--v-petroleo-2) 100%) !important;
+}
+.marca {
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+.res, .mono {
+  letter-spacing: .3px;
+  opacity: .85;
+}
+
+/* Buscador: más aire y foco visible accesible */
+.caja-busqueda,
+.zona-busqueda input {
+  border-radius: 12px !important;
+}
+.zona-busqueda input:focus,
+input:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--v-acento) 40%, transparent) !important;
+  outline-offset: 1px;
+}
+
+/* ---- 3. Tarjetas de resultado y fichas: profundidad y ritmo ---- */
+.fila,
+.tarjeta,
+.grupo-arsenal,
+.card,
+.item-paro {
+  border-radius: var(--v-radio) !important;
+  box-shadow: var(--v-sombra) !important;
+  border: 1px solid var(--v-borde) !important;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.fila:hover,
+.tarjeta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(18,34,42,.08), 0 8px 24px rgba(18,34,42,.10) !important;
+}
+.nombre,
+.nom,
+.titular {
+  font-weight: 650;
+  letter-spacing: .1px;
+}
+.sub, .det, .conc, .forma {
+  color: var(--v-tinta-2);
+}
+
+/* Banda de estado del semáforo: más nítida y con color de texto acorde */
+.marca-estado.si,      .marca-estado.verde   { background: var(--v-verde)  !important; }
+.marca-estado.cond,    .marca-estado.ambar   { background: var(--v-ambar)  !important; }
+.marca-estado.no,      .marca-estado.rojo    { background: var(--v-rojo)   !important; }
+
+.veredicto.si,   .cl.si   { background: var(--v-verde-bg);  color: var(--v-verde); }
+.veredicto.cond, .cl.cond { background: var(--v-ambar-bg);  color: var(--v-ambar); }
+.veredicto.no,   .cl.no   { background: var(--v-rojo-bg);   color: var(--v-rojo); }
+.veredicto {
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-weight: 600;
+}
+
+/* Insignias / chips: forma píldora coherente */
+.chip,
+.insignia,
+.etq,
+.tax {
+  border-radius: 999px !important;
+  font-weight: 550;
+  letter-spacing: .2px;
+}
+.chip.activa {
+  background: var(--v-petroleo) !important;
+  color: #fff !important;
+}
+
+/* Alertas y avisos: color semántico consistente */
+.alerta,
+.aviso {
+  border-left: 4px solid var(--v-ambar);
+  background: var(--v-ambar-bg);
+  border-radius: 10px;
+}
+.orientativo {
+  border-left: 4px solid var(--v-acento);
+  background: color-mix(in srgb, var(--v-acento) 8%, #fff);
+  border-radius: 10px;
+}
+
+/* ---- 4. Iconografía por categoría terapéutica (::before) ---- */
+/* Refuerza el reconocimiento visual sin fotos de fármacos (riesgo clínico). */
+.tarjeta[data-cat]::before,
+.tax::before {
+  margin-right: .4em;
+  font-size: 1.05em;
+  line-height: 1;
+}
+.tax[data-cat="Cardiovascular"]::before,
+.tax[data-cat="Cardiovascular/renal"]::before,
+.tax[data-cat="Cardiovascular/hematología"]::before,
+.tax[data-cat="Cardiometabólico"]::before        { content: "🫀"; }
+.tax[data-cat="Respiratorio"]::before             { content: "🫁"; }
+.tax[data-cat="Salud mental"]::before,
+.tax[data-cat="Salud mental/urgencias"]::before   { content: "🧠"; }
+.tax[data-cat="Neurología"]::before               { content: "🧠"; }
+.tax[data-cat="Diabetes"]::before,
+.tax[data-cat="Endocrinología"]::before           { content: "💉"; }
+.tax[data-cat="Dolor e inflamación"]::before,
+.tax[data-cat="Dolor y fiebre"]::before           { content: "🌡️"; }
+.tax[data-cat="Gastrointestinal"]::before,
+.tax[data-cat="Gastrointestinal/hidratación"]::before { content: "🩹"; }
+.tax[data-cat="Alergia"]::before                  { content: "🌿"; }
+.tax[data-cat="Corticoides"]::before              { content: "💊"; }
+.tax[data-cat="Fluidos y electrolitos"]::before   { content: "💧"; }
+.tax[data-cat="Urgencias y reanimación"]::before  { content: "🚑"; }
+.tax[data-cat="Anestesia local y procedimientos"]::before { content: "🩺"; }
+.tax[data-cat="Salud sexual y reproductiva"]::before { content: "⚕️"; }
+.tax[data-cat="Metabólico/toxicología"]::before   { content: "⚗️"; }
+
+/* ---- 5. Botones: consistentes y accesibles ---- */
+.btn {
+  border-radius: 10px !important;
+  font-weight: 600;
+  transition: filter .12s ease, transform .06s ease;
+}
+.btn:active { transform: translateY(1px); }
+.btn.secundario:hover { filter: brightness(.97); }
+.btn.peligro { background: var(--v-rojo) !important; color: #fff !important; }
+
+/* ---- 6. Detalles finos ---- */
+::selection { background: color-mix(in srgb, var(--v-acento) 25%, transparent); }
+* { -webkit-tap-highlight-color: transparent; }
+
+@media (min-width: 720px) {
+  .app { max-width: 860px; margin-inline: auto; }
+}
