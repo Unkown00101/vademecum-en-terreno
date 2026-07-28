@@ -115,7 +115,14 @@ input:focus-visible {
 }
 
 /* ---------- 5. Barra de pestañas inferior: separada y con acento ---------- */
+/* IMPORTANTE: el CSS original la hace position:sticky top:0 en pantallas
+   ≥700px, lo que la dejaba flotando ENCIMA del contenido al hacer scroll
+   (z-index 50 > header 40). La devolvemos al flujo normal: se desplaza
+   con la página como una sección más, sin taparlo todo. */
 .inferior {
+  position: static !important;
+  top: auto !important;
+  z-index: 1 !important;
   background: #fff !important;
   border-radius: var(--v-radio) !important;
   box-shadow: var(--v-sombra) !important;
