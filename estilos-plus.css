@@ -206,26 +206,35 @@ input:focus-visible {
   box-shadow: var(--v-sombra) !important;
   border-color: color-mix(in srgb, var(--v-teal) 40%, var(--v-borde)) !important;
 }
-/* El primer span (texto) crece y empuja el número al extremo derecho */
+/* El primer span (texto) crece, envuelve en varias líneas si hace falta
+   y parte las palabras muy largas (p.ej. "Cardiovascular/hematología")
+   para no desbordar el recuadro. */
 .btn-cat > span:first-of-type {
   flex: 1 1 auto !important;
-  line-height: 1.25 !important;
+  min-width: 0 !important;            /* permite que el flex item se encoja */
+  line-height: 1.2 !important;
+  font-size: .92rem !important;       /* un punto menos: más nombres caben en 1-2 líneas */
+  white-space: normal !important;
+  overflow-wrap: anywhere !important; /* parte "Cardiovascular/renal" si no cabe */
+  word-break: break-word !important;
+  hyphens: auto;
 }
-/* El número (conteo) fijo a la derecha, con acento */
+/* El número (conteo) SIEMPRE con su espacio fijo a la derecha */
 .btn-cat > .n,
 .btn-cat > span:last-child {
   flex: 0 0 auto !important;
   color: var(--v-teal) !important;
   font-weight: 750 !important;
-  margin-left: 8px !important;
+  margin-left: 10px !important;
+  white-space: nowrap !important;
 }
 
-/* Iconografía por categoría: ícono como caja fija que NO desalinea */
+/* Iconografía por categoría: caja fija, un poco más chica, no desalinea */
 .btn-cat::before {
   flex: 0 0 auto !important;
-  width: 1.5em;
+  width: 1.4em;
   text-align: center;
-  font-size: 1.25em;
+  font-size: 1.15em;
   line-height: 1;
 }
 .btn-cat[data-cat^="Cardio"]::before   { content: "🫀"; }
@@ -287,6 +296,15 @@ input:focus-visible {
 .btn.peligro { background: var(--v-rojo) !important; color:#fff !important; }
 
 /* ---------- 11. Detalles ---------- */
+/* Defensa global: ningún texto largo (nombres de fármaco, etiquetas,
+   registros ISP) debe desbordar su tarjeta. Parte palabras si hace falta. */
+.fila, .grupo-arsenal, .pres, .item-paro, .card,
+.nombre, .nom, .titular, .sub, .det, .alias,
+.veredicto, .insignia, .etq, .tax {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  min-width: 0;
+}
 ::selection { background: color-mix(in srgb, var(--v-teal) 22%, transparent); }
 * { -webkit-tap-highlight-color: transparent; }
 
