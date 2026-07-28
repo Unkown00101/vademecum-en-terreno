@@ -65,11 +65,45 @@ header > * {
   max-width: 1120px;
   margin-inline: auto;
 }
+/* Marca: logo institucional + bloque de texto, alineados horizontalmente */
+.marca {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+}
+.logo-illapel {
+  flex: 0 0 auto;
+  height: 52px;
+  width: auto;
+  background: #fff;
+  border-radius: 10px;
+  padding: 5px 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.18);
+}
+.marca-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
 .marca h1 {
   font-weight: 750;
   letter-spacing: .2px;
+  margin: 0 !important;
+}
+.institucion {
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: .2px;
+  color: rgba(255,255,255,.9);
+  line-height: 1.25;
 }
 .res, .mono { opacity: .82; letter-spacing: .4px; }
+
+@media (max-width: 520px) {
+  .logo-illapel { height: 42px; }
+  .institucion { font-size: .66rem; }
+}
 
 .selector-estab {
   border-radius: 999px !important;
